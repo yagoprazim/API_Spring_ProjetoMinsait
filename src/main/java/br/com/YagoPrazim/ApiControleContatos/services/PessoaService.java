@@ -20,5 +20,11 @@ public class PessoaService {
         return pessoaRepository.findAll(paginacao);
     }
 
+    public Pessoa registrarPessoa(Pessoa pessoa) {
+        return pessoaRepository.save(pessoa);
+    }
+
+
+
 
 }
