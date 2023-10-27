@@ -1,11 +1,13 @@
 package br.com.YagoPrazim.ApiControleContatos.services;
 
-import br.com.YagoPrazim.ApiControleContatos.models.Pessoa;
+import br.com.YagoPrazim.ApiControleContatos.models.PessoaModel;
 import br.com.YagoPrazim.ApiControleContatos.repositories.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class PessoaService {
@@ -16,12 +18,16 @@ public class PessoaService {
         this.pessoaRepository = pessoaRepository;
     }
 
-    public Page<Pessoa> listarTodasPessoas(Pageable paginacao) {
+    public Page<PessoaModel> listarTodasPessoas(Pageable paginacao) {
         return pessoaRepository.findAll(paginacao);
     }
 
-    public Pessoa registrarPessoa(Pessoa pessoa) {
-        return pessoaRepository.save(pessoa);
+    public Optional<PessoaModel> listarUmaPessoa(Long id) {
+        return pessoaRepository.findById(id);
+    }
+
+    public PessoaModel registrarPessoa(PessoaModel pessoaModel) {
+        return pessoaRepository.save(pessoaModel);
     }
 
 

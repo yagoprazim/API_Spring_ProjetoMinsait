@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of="id")
-public class Pessoa {
+public class PessoaModel {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

@@ -1,6 +1,6 @@
 package br.com.YagoPrazim.ApiControleContatos.controllers;
 
-import br.com.YagoPrazim.ApiControleContatos.models.Pessoa;
+import br.com.YagoPrazim.ApiControleContatos.models.PessoaModel;
 import br.com.YagoPrazim.ApiControleContatos.services.PessoaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("api/pessoas")
 public class PessoaController {
@@ -19,14 +21,22 @@ public class PessoaController {
     public PessoaController(PessoaService pessoaService){this.pessoaService = pessoaService;}
 
     @GetMapping
-    public ResponseEntity<Page<Pessoa>> listarTodasPessoas(@PageableDefault(size = 10) Pageable paginacao) {
+    public ResponseEntity<Page<PessoaModel>> listarTodasPessoas(@PageableDefault(size = 10) Pageable paginacao) {
         return ResponseEntity.status(HttpStatus.OK).body(pessoaService.listarTodasPessoas(paginacao));
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<PessoaModel>> listarUmaPessoa(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(pessoaService.listarUmaPessoa(id));
     }
     @Transactional
     @PostMapping
-    public ResponseEntity<Pessoa> registrarPessoa(@RequestBody Pessoa pessoa){
-        return ResponseEntity.status(HttpStatus.CREATED).body(pessoaService.registrarPessoa(pessoa));
+    public ResponseEntity<PessoaModel> registrarPessoa(@RequestBody PessoaModel pessoaModel){
+        return ResponseEntity.status(HttpStatus.CREATED).body(pessoaService.registrarPessoa(pessoaModel));
     }
+
+
+
+
 
 
 
