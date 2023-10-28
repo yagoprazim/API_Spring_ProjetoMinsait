@@ -39,6 +39,14 @@ public class PessoaController {
     public ResponseEntity<PessoaModel> atualizarPessoa(@PathVariable Long id, @RequestBody PessoaModel pessoaModel) {
         return ResponseEntity.status(HttpStatus.OK).body(pessoaService.atualizarPessoa(id, pessoaModel));
     }
+    @Transactional
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletarPessoa(@PathVariable Long id){
+        pessoaService.deletarPessoa(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
 
 
 

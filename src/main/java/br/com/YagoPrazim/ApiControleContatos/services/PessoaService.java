@@ -41,7 +41,11 @@ public class PessoaService {
             pessoaAtualizada.setUf(pessoaModel.getUf());
             return pessoaRepository.save(pessoaAtualizada);
         }
-        return pessoaModel;
+        return null;
+    }
+
+    public void deletarPessoa(Long id) {
+        pessoaRepository.deleteById(id);
     }
 
 
