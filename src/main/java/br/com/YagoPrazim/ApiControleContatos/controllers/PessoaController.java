@@ -17,12 +17,12 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/pessoas")
 public class PessoaController {
-    private PessoaService pessoaService;
+    private final PessoaService pessoaService;
     @Autowired
     public PessoaController(PessoaService pessoaService){this.pessoaService = pessoaService;}
 
     @GetMapping
-    public ResponseEntity<Page<PessoaModel>> listarTodasPessoas(@PageableDefault(size = 10) Pageable paginacao) {
+    public ResponseEntity<Page<PessoaModel>> listarTodasPessoas(@PageableDefault() Pageable paginacao) {
         return ResponseEntity.status(HttpStatus.OK).body(pessoaService.listarTodasPessoas(paginacao));
     }
 
