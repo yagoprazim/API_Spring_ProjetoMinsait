@@ -1,8 +1,8 @@
 package br.com.YagoPrazim.ApiControleContatos.services;
 
+import br.com.YagoPrazim.ApiControleContatos.Dtos.MalaDiretaDto;
 import br.com.YagoPrazim.ApiControleContatos.models.PessoaModel;
 import br.com.YagoPrazim.ApiControleContatos.repositories.PessoaRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +23,18 @@ public class PessoaService {
         return pessoaRepository.findAll(paginacao);
     }
 
-    public Optional<PessoaModel> listarUmaPessoa(Long id) {return pessoaRepository.findById(id);}
+    public Optional<PessoaModel> listarPessoaPorId(Long id) {return pessoaRepository.findById(id);}
+
+    public Optional<MalaDiretaDto> listarMalaDiretaPorId(Long id) {
+        return pessoaRepository.findById(id)
+            .map(pessoa -> {
+                String malaDireta = pessoa.getEndereco() + " - CEP: " +
+                    pessoa.getCep() + " - " +
+                    pessoa.getCidade() + "/" +
+                    pessoa.getUf();
+                return new MalaDiretaDto(pessoa.getId(), pessoa.getNome(), malaDireta);
+            });
+    }
 
     public PessoaModel registrarPessoa(PessoaModel pessoaModel) {
         return pessoaRepository.save(pessoaModel);
