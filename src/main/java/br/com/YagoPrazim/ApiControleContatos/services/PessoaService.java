@@ -44,7 +44,7 @@ public class PessoaService {
                     pessoa.getCidade() + "/" +
                     pessoa.getUf();
                 return new MalaDiretaDto(pessoa.getId(), pessoa.getNome(), malaDireta);
-            }).orElseThrow(() -> new ResourceNotFoundException("Não foi possível atualizar! Pessoa não encontrada."));
+            }).orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada!"));
     }
 
     public PessoaModel registrarPessoa(PessoaModel pessoaModel) {
@@ -54,7 +54,7 @@ public class PessoaService {
     public PessoaModel atualizarPessoa(Long id, PessoaModel pessoaModel) {
         Optional<PessoaModel> pessoaEncontrada = pessoaRepository.findById(id);
         if (pessoaEncontrada.isEmpty()){
-            throw new ResourceNotFoundException("Pessoa não encontrada!");
+            throw new ResourceNotFoundException("Não foi possível atualizar, pessoa não encontrada!");
         }
         PessoaModel pessoaAtualizada = pessoaEncontrada.get();
         pessoaAtualizada.setNome(pessoaModel.getNome());
@@ -67,7 +67,7 @@ public class PessoaService {
 
     public void deletarPessoa(Long id) {
         if (!pessoaRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Não foi possível deletar! Pessoa não encontrada.");
+            throw new ResourceNotFoundException("Não foi possível deletar, pessoa não encontrada!");
         }
         pessoaRepository.deleteById(id);
     }
