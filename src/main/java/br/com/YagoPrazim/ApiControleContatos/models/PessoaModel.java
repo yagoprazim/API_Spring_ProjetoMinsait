@@ -1,9 +1,9 @@
 package br.com.YagoPrazim.ApiControleContatos.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -11,11 +11,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of="id")
 public class PessoaModel {
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "{nome.obrigatorio}")
     @Column(nullable = false)
     private String nome;
 
@@ -26,4 +27,5 @@ public class PessoaModel {
     private String cidade;
 
     private String uf;
+
 }

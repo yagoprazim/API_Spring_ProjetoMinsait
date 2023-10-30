@@ -1,6 +1,6 @@
 package br.com.YagoPrazim.ApiControleContatos.services;
 
-import br.com.YagoPrazim.ApiControleContatos.Dtos.MalaDiretaDto;
+import br.com.YagoPrazim.ApiControleContatos.dtos.MalaDiretaDto;
 import br.com.YagoPrazim.ApiControleContatos.models.PessoaModel;
 import br.com.YagoPrazim.ApiControleContatos.repositories.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
