@@ -44,7 +44,7 @@ public class PessoaService {
                     pessoa.getCidade() + "/" +
                     pessoa.getUf();
                 return new MalaDiretaDto(pessoa.getId(), pessoa.getNome(), malaDireta);
-            }).orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada!"));
+            }).orElseThrow(() -> new ResourceNotFoundException("Não foi possível atualizar! Pessoa não encontrada."));
     }
 
     public PessoaModel registrarPessoa(PessoaModel pessoaModel) {
@@ -53,20 +53,22 @@ public class PessoaService {
 
     public PessoaModel atualizarPessoa(Long id, PessoaModel pessoaModel) {
         Optional<PessoaModel> pessoaEncontrada = pessoaRepository.findById(id);
-
-        if (pessoaEncontrada.isPresent()) {
-            PessoaModel pessoaAtualizada = pessoaEncontrada.get();
-            pessoaAtualizada.setNome(pessoaModel.getNome());
-            pessoaAtualizada.setEndereco(pessoaModel.getEndereco());
-            pessoaAtualizada.setCep(pessoaModel.getCep());
-            pessoaAtualizada.setCidade(pessoaModel.getCidade());
-            pessoaAtualizada.setUf(pessoaModel.getUf());
-            return pessoaRepository.save(pessoaAtualizada);
+        if (pessoaEncontrada.isEmpty()){
+            throw new ResourceNotFoundException("Pessoa não encontrada!");
         }
-        return null;
+        PessoaModel pessoaAtualizada = pessoaEncontrada.get();
+        pessoaAtualizada.setNome(pessoaModel.getNome());
+        pessoaAtualizada.setEndereco(pessoaModel.getEndereco());
+        pessoaAtualizada.setCep(pessoaModel.getCep());
+        pessoaAtualizada.setCidade(pessoaModel.getCidade());
+        pessoaAtualizada.setUf(pessoaModel.getUf());
+        return pessoaRepository.save(pessoaAtualizada);
     }
 
     public void deletarPessoa(Long id) {
+        if (!pessoaRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Não foi possível deletar! Pessoa não encontrada.");
+        }
         pessoaRepository.deleteById(id);
     }
 
