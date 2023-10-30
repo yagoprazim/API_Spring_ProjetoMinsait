@@ -4,6 +4,7 @@ import br.com.YagoPrazim.ApiControleContatos.dtos.MalaDiretaDto;
 import br.com.YagoPrazim.ApiControleContatos.models.PessoaModel;
 import br.com.YagoPrazim.ApiControleContatos.services.PessoaService;
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +24,7 @@ public class PessoaController {
     public PessoaController(PessoaService pessoaService){this.pessoaService = pessoaService;}
 
     @GetMapping
-    public ResponseEntity<Page<PessoaModel>> listarTodasPessoas(@PageableDefault() Pageable paginacao) {
+    public ResponseEntity<Page<PessoaModel>> listarTodasPessoas(@PageableDefault() @ParameterObject Pageable paginacao) {
         return ResponseEntity.status(HttpStatus.OK).body(pessoaService.listarTodasPessoas(paginacao));
     }
 

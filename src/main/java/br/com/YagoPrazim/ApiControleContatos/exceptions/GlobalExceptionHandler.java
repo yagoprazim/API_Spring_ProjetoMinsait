@@ -15,8 +15,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<ErrosListaDto>> trataErro400(MethodArgumentNotValidException exception){
-        var listaErros = exception.getFieldErrors();
-        return ResponseEntity.badRequest().body(listaErros.stream().map(ErrosListaDto::new).toList());
+        var errosLista = exception.getFieldErrors();
+        return ResponseEntity.badRequest().body(errosLista.stream().map(ErrosListaDto::new).toList());
     }
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErroDto> trataErro404(ResourceNotFoundException exception) {
