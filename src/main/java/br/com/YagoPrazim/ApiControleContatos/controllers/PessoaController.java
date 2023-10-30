@@ -33,7 +33,7 @@ public class PessoaController {
     }
 
     @GetMapping("/maladireta/{id}")
-    public ResponseEntity<Optional<MalaDiretaDto>> listarMalaDiretaPorId(@PathVariable Long id) {
+    public ResponseEntity<MalaDiretaDto> listarMalaDiretaPorId(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(pessoaService.listarMalaDiretaPorId(id));
     }
 

@@ -16,7 +16,7 @@ public class PessoaModel {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "{nome.obrigatorio}")
+    @NotBlank(message = "O campo 'nome' é obrigatório!")
     @Column(nullable = false)
     private String nome;
 

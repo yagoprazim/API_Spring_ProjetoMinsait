@@ -3,6 +3,7 @@ package br.com.YagoPrazim.ApiControleContatos.services;
 import br.com.YagoPrazim.ApiControleContatos.dtos.MalaDiretaDto;
 import br.com.YagoPrazim.ApiControleContatos.models.PessoaModel;
 import br.com.YagoPrazim.ApiControleContatos.repositories.PessoaRepository;
+import br.com.YagoPrazim.ApiControleContatos.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,12 +21,22 @@ public class PessoaService {
     }
 
     public Page<PessoaModel> listarTodasPessoas(Pageable paginacao) {
-        return pessoaRepository.findAll(paginacao);
+        Page<PessoaModel> pessoas = pessoaRepository.findAll(paginacao);
+        if (pessoas.isEmpty()) {
+            throw new ResourceNotFoundException("Não há pessoas registradas, cadastre uma!");
+        }
+        return pessoas;
     }
 
-    public Optional<PessoaModel> listarPessoaPorId(Long id) {return pessoaRepository.findById(id);}
+    public Optional<PessoaModel> listarPessoaPorId(Long id) {
+        Optional<PessoaModel> pessoa = pessoaRepository.findById(id);
+        if (pessoa.isEmpty()) {
+            throw new ResourceNotFoundException("Pessoa não encontrada!");
+        }
+        return pessoa;
+    }
 
-    public Optional<MalaDiretaDto> listarMalaDiretaPorId(Long id) {
+    public MalaDiretaDto listarMalaDiretaPorId(Long id) {
         return pessoaRepository.findById(id)
             .map(pessoa -> {
                 String malaDireta = pessoa.getEndereco() + " - CEP: " +
@@ -33,7 +44,7 @@ public class PessoaService {
                     pessoa.getCidade() + "/" +
                     pessoa.getUf();
                 return new MalaDiretaDto(pessoa.getId(), pessoa.getNome(), malaDireta);
-            });
+            }).orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada!"));
     }
 
     public PessoaModel registrarPessoa(PessoaModel pessoaModel) {

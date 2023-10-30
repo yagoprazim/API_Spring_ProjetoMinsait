@@ -2,9 +2,8 @@ package br.com.YagoPrazim.ApiControleContatos.dtos;
 
 import org.springframework.validation.FieldError;
 
-public record DadosValidacaoErrosDto(String campo, String erro) {
-
-    public DadosValidacaoErrosDto(FieldError erro){
+public record ErrosListaDto(String campo, String erro) {
+    public ErrosListaDto(FieldError erro){
         this(erro.getField(), erro.getDefaultMessage());
     }
 }
