@@ -4,8 +4,6 @@ import br.com.YagoPrazim.ApiControleContatos.validations.constraints.TipoContato
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,15 +28,7 @@ public class ContatoModel {
     private String contato;
 
     @ManyToOne
-    @JoinColumn(name = "pessoa_id")
-    @NotNull(message = "O contato deve estar associado a uma pessoa.")
-    private PessoaModel pessoaModel;
-
-
-
-
-
-
-
+    @JoinColumn(name = "pessoa_id", nullable = false)
+    private PessoaModel pessoa;
 
 }

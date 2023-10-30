@@ -28,12 +28,9 @@ public class PessoaService {
         return pessoas;
     }
 
-    public Optional<PessoaModel> listarPessoaPorId(Long id) {
-        Optional<PessoaModel> pessoa = pessoaRepository.findById(id);
-        if (pessoa.isEmpty()) {
-            throw new ResourceNotFoundException("Pessoa não encontrada!");
-        }
-        return pessoa;
+    public PessoaModel listarPessoaPorId(Long id) {
+        return pessoaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada com o ID: " + id));
     }
 
     public MalaDiretaDto listarMalaDiretaPorId(Long id) {

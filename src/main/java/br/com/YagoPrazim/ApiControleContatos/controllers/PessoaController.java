@@ -29,7 +29,7 @@ public class PessoaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<PessoaModel>> listarPessoaPorId(@PathVariable Long id){
+    public ResponseEntity<PessoaModel> listarPessoaPorId(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK).body(pessoaService.listarPessoaPorId(id));
     }
 
