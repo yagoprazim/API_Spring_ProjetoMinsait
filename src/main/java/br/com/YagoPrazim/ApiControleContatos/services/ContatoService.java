@@ -17,10 +17,9 @@ public class ContatoService {
         this.pessoaService = pessoaService;
     }
 
-    public ContatoModel registrarContato(Long id, ContatoModel contatoModel) {
-        PessoaModel pessoa = pessoaService.listarPessoaPorId(id);
-        contatoModel.setPessoa(pessoa);
-        return contatoRepository.save(contatoModel);
-    }
-
+//    public ContatoModel registrarContato(Long id, ContatoModel contatoModel) {
+//        PessoaModel pessoa = pessoaService.listarPessoaPorId(id);
+//        contatoModel.setPessoa(pessoa);
+//        return contatoRepository.save(contatoModel);
+//    }
 }

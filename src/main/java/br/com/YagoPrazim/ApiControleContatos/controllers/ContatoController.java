@@ -17,10 +17,10 @@ public class ContatoController {
     public ContatoController(ContatoService contatoService){
         this.contatoService = contatoService;
     }
-    @Transactional
-    @PostMapping("/pessoas/{id}/contatos")
-    public ResponseEntity<ContatoModel> registrarContato(@PathVariable Long id, @RequestBody @Valid ContatoModel contatoModel) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(contatoService.registrarContato(id, contatoModel));
-    }
+//    @Transactional
+//    @PostMapping("/pessoas/{id}/contatos")
+//    public ResponseEntity<ContatoModel> registrarContato(@PathVariable Long id, @RequestBody @Valid ContatoModel contatoModel) {
+//        return ResponseEntity.status(HttpStatus.CREATED).body(contatoService.registrarContato(id, contatoModel));
+//    }
 
 }

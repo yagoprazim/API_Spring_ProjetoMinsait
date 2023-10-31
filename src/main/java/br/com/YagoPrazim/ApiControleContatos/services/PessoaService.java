@@ -1,73 +1,84 @@
 package br.com.YagoPrazim.ApiControleContatos.services;
 
 import br.com.YagoPrazim.ApiControleContatos.dtos.MalaDiretaDto;
+import br.com.YagoPrazim.ApiControleContatos.dtos.PessoaDto;
+import br.com.YagoPrazim.ApiControleContatos.mapper.PessoaMapper;
 import br.com.YagoPrazim.ApiControleContatos.models.PessoaModel;
 import br.com.YagoPrazim.ApiControleContatos.repositories.PessoaRepository;
 import br.com.YagoPrazim.ApiControleContatos.exceptions.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+@RequiredArgsConstructor
 @Service
 public class PessoaService {
 
     private final PessoaRepository pessoaRepository;
-    @Autowired
-    public PessoaService(PessoaRepository pessoaRepository) {
-        this.pessoaRepository = pessoaRepository;
-    }
 
-    public Page<PessoaModel> listarTodasPessoas(Pageable paginacao) {
+    public Page<PessoaDto> listarTodasPessoas(Pageable paginacao) {
         Page<PessoaModel> pessoas = pessoaRepository.findAll(paginacao);
+
         if (pessoas.isEmpty()) {
             throw new ResourceNotFoundException("Não há pessoas registradas, cadastre uma!");
         }
-        return pessoas;
+
+        return pessoas.map(PessoaMapper.INSTANCE::toDto);
     }
 
-    public PessoaModel listarPessoaPorId(Long id) {
-        return pessoaRepository.findById(id)
+    public PessoaDto listarPessoaPorId(Long id) {
+        PessoaModel pessoaModel = pessoaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada com o ID: " + id));
+
+        return PessoaMapper.INSTANCE.toDto(pessoaModel);
     }
 
     public MalaDiretaDto listarMalaDiretaPorId(Long id) {
         return pessoaRepository.findById(id)
-            .map(pessoa -> {
-                String malaDireta = pessoa.getEndereco() + " - CEP: " +
-                    pessoa.getCep() + " - " +
-                    pessoa.getCidade() + "/" +
-                    pessoa.getUf();
-                return new MalaDiretaDto(pessoa.getId(), pessoa.getNome(), malaDireta);
-            }).orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada!"));
+                .map(pessoaModel -> PessoaMapper.INSTANCE.toDto(pessoaModel))
+                .map(this::construirMalaDiretaDto)
+                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada!"));
     }
 
-    public PessoaModel registrarPessoa(PessoaModel pessoaModel) {
-        return pessoaRepository.save(pessoaModel);
+
+    private MalaDiretaDto construirMalaDiretaDto(PessoaDto pessoaDto) {
+        String malaDireta = Stream.of(pessoaDto.endereco(),
+                        Optional.ofNullable(pessoaDto.cep()).map(cep -> "CEP: " + cep).orElse(null),
+                        pessoaDto.cidade(),
+                        pessoaDto.uf())
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(" - "));
+        return new MalaDiretaDto(pessoaDto.id(), pessoaDto.nome(), malaDireta);
     }
 
-    public PessoaModel atualizarPessoa(Long id, PessoaModel pessoaModel) {
-        Optional<PessoaModel> pessoaEncontrada = pessoaRepository.findById(id);
-        if (pessoaEncontrada.isEmpty()){
-            throw new ResourceNotFoundException("Não foi possível atualizar, pessoa não encontrada!");
-        }
-        PessoaModel pessoaAtualizada = pessoaEncontrada.get();
-        pessoaAtualizada.setNome(pessoaModel.getNome());
-        pessoaAtualizada.setEndereco(pessoaModel.getEndereco());
-        pessoaAtualizada.setCep(pessoaModel.getCep());
-        pessoaAtualizada.setCidade(pessoaModel.getCidade());
-        pessoaAtualizada.setUf(pessoaModel.getUf());
-        return pessoaRepository.save(pessoaAtualizada);
+    public PessoaDto registrarPessoa(PessoaDto pessoaDto) {
+        PessoaModel pessoaModel = PessoaMapper.INSTANCE.toModel(pessoaDto);
+        PessoaModel pessoaSalva = pessoaRepository.save(pessoaModel);
+
+        return PessoaMapper.INSTANCE.toDto(pessoaSalva);
+    }
+
+    public PessoaDto atualizarPessoa(Long id, PessoaDto pessoaDto) {
+        PessoaModel pessoaModel = pessoaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Não foi possível atualizar, pessoa não encontrada!"));
+
+        PessoaMapper.INSTANCE.updateModelFromDto(pessoaDto, pessoaModel);
+
+        PessoaModel pessoaAtualizada = pessoaRepository.save(pessoaModel);
+
+        return PessoaMapper.INSTANCE.toDto(pessoaAtualizada);
     }
 
     public void deletarPessoa(Long id) {
-        if (!pessoaRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Não foi possível deletar, pessoa não encontrada!");
-        }
-        pessoaRepository.deleteById(id);
+        PessoaModel pessoaModel = pessoaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Não foi possível deletar, pessoa não encontrada!"));
+
+        pessoaRepository.delete(pessoaModel);
     }
-
-
 }
