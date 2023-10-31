@@ -1,5 +1,6 @@
 package br.com.YagoPrazim.ApiControleContatos.controllers;
 
+import br.com.YagoPrazim.ApiControleContatos.dtos.ContatoDto;
 import br.com.YagoPrazim.ApiControleContatos.dtos.MalaDiretaDto;
 import br.com.YagoPrazim.ApiControleContatos.dtos.PessoaDto;
 import br.com.YagoPrazim.ApiControleContatos.services.PessoaService;
@@ -60,5 +61,19 @@ public class PessoaController {
         pessoaService.deletarPessoa(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/contatos")
+    public ResponseEntity<ContatoDto> adicionarContato(@PathVariable Long id, @RequestBody @Valid ContatoDto contatoDto) {
+        ContatoDto contatoAdicionado = pessoaService.adicionarContato(id, contatoDto);
+
+        return ResponseEntity.ok(contatoAdicionado);
+    }
+
+    @GetMapping("/{idPessoa}/contatos")
+    public ResponseEntity<Page<ContatoDto>> listarContatos(@PathVariable Long idPessoa, @PageableDefault @ParameterObject Pageable paginacao) {
+
+        Page<ContatoDto> contatosDtoPage = pessoaService.listarContatos(idPessoa, paginacao);
+        return ResponseEntity.ok(contatosDtoPage);
     }
 }

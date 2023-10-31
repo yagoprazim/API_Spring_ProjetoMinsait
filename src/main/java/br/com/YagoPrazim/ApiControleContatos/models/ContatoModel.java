@@ -19,11 +19,9 @@ public class ContatoModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Você deve escolher um tipo de contato.")
-    @TipoContato
+    @Column(nullable = false)
     private Integer tipoContato;
 
-    @NotBlank(message = "Digite um número de telefone ou celular.")
     @Column(nullable = false)
     private String contato;
 

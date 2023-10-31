@@ -1,9 +1,13 @@
 package br.com.YagoPrazim.ApiControleContatos.services;
 
+import br.com.YagoPrazim.ApiControleContatos.dtos.ContatoDto;
 import br.com.YagoPrazim.ApiControleContatos.dtos.MalaDiretaDto;
 import br.com.YagoPrazim.ApiControleContatos.dtos.PessoaDto;
+import br.com.YagoPrazim.ApiControleContatos.mapper.ContatoMapper;
 import br.com.YagoPrazim.ApiControleContatos.mapper.PessoaMapper;
+import br.com.YagoPrazim.ApiControleContatos.models.ContatoModel;
 import br.com.YagoPrazim.ApiControleContatos.models.PessoaModel;
+import br.com.YagoPrazim.ApiControleContatos.repositories.ContatoRepository;
 import br.com.YagoPrazim.ApiControleContatos.repositories.PessoaRepository;
 import br.com.YagoPrazim.ApiControleContatos.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +25,7 @@ import java.util.stream.Stream;
 public class PessoaService {
 
     private final PessoaRepository pessoaRepository;
+    private final ContatoRepository contatoRepository;
 
     public Page<PessoaDto> listarTodasPessoas(Pageable paginacao) {
         Page<PessoaModel> pessoas = pessoaRepository.findAll(paginacao);
@@ -80,5 +85,30 @@ public class PessoaService {
                 .orElseThrow(() -> new ResourceNotFoundException("Não foi possível deletar, pessoa não encontrada!"));
 
         pessoaRepository.delete(pessoaModel);
+    }
+
+    public ContatoDto adicionarContato(Long pessoaId, ContatoDto contatoDto) {
+        PessoaModel pessoaModel = pessoaRepository.findById(pessoaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada!"));
+
+        ContatoModel contatoModel = ContatoMapper.INSTANCE.toModel(contatoDto);
+        contatoModel.setPessoa(pessoaModel);
+
+        ContatoModel contatoSalvo = contatoRepository.save(contatoModel);
+
+        return ContatoMapper.INSTANCE.toDto(contatoSalvo);
+    }
+
+    public Page<ContatoDto> listarContatos(Long pessoaId, Pageable paginacao) {
+        PessoaModel pessoaModel = pessoaRepository.findById(pessoaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada!"));
+
+        Page<ContatoModel> contatosModelPage = contatoRepository.findByPessoa(pessoaModel, paginacao);
+
+        if (contatosModelPage.isEmpty()) {
+            throw new ResourceNotFoundException("Nenhum contato encontrado para a pessoa com ID: " + pessoaId);
+        }
+
+        return contatosModelPage.map(ContatoMapper.INSTANCE::toDto);
     }
 }

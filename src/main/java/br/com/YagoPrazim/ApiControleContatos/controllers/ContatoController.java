@@ -1,26 +1,38 @@
 package br.com.YagoPrazim.ApiControleContatos.controllers;
 
-import br.com.YagoPrazim.ApiControleContatos.models.ContatoModel;
+import br.com.YagoPrazim.ApiControleContatos.dtos.ContatoDto;
 import br.com.YagoPrazim.ApiControleContatos.services.ContatoService;
+
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
-@RequestMapping("api")
+@RequestMapping("/contatos")
 public class ContatoController {
+
     private final ContatoService contatoService;
-    @Autowired
-    public ContatoController(ContatoService contatoService){
-        this.contatoService = contatoService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ContatoDto> listarContatoPorId(@PathVariable Long id) {
+        ContatoDto contatoDto = contatoService.listarContatoPorId(id);
+
+        return ResponseEntity.ok(contatoDto);
     }
-//    @Transactional
-//    @PostMapping("/pessoas/{id}/contatos")
-//    public ResponseEntity<ContatoModel> registrarContato(@PathVariable Long id, @RequestBody @Valid ContatoModel contatoModel) {
-//        return ResponseEntity.status(HttpStatus.CREATED).body(contatoService.registrarContato(id, contatoModel));
-//    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ContatoDto> atualizarContato(@PathVariable Long id, @RequestBody @Valid ContatoDto contatoDto){
+        ContatoDto contatoAtualizado = contatoService.atualizarContato(id, contatoDto);
+        return ResponseEntity.ok(contatoAtualizado);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarContato(@PathVariable Long id) {
+        contatoService.deletarContato(id);
+
+        return ResponseEntity.noContent().build();
+    }
 
 }
