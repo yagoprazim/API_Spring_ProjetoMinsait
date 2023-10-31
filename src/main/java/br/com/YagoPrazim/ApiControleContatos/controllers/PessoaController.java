@@ -63,17 +63,21 @@ public class PessoaController {
         return ResponseEntity.noContent().build();
     }
 
+    //CONTROLLERS QUE SE RELACIONAM COM CONTATOS:
+    //----------------------------------------------------------------------------------------------------------
+    @GetMapping("/{idPessoa}/contatos")
+    public ResponseEntity<Page<ContatoDto>> listarContatosPessoa(@PathVariable Long idPessoa, @PageableDefault @ParameterObject Pageable paginacao) {
+        Page<ContatoDto> contatosDtoPage = pessoaService.listarContatosPessoa(idPessoa, paginacao);
+
+        return ResponseEntity.ok(contatosDtoPage);
+    }
+
     @PostMapping("/{id}/contatos")
-    public ResponseEntity<ContatoDto> adicionarContato(@PathVariable Long id, @RequestBody @Valid ContatoDto contatoDto) {
-        ContatoDto contatoAdicionado = pessoaService.adicionarContato(id, contatoDto);
+    public ResponseEntity<ContatoDto> adicionarContatoPessoa(@PathVariable Long id, @RequestBody @Valid ContatoDto contatoDto) {
+        ContatoDto contatoAdicionado = pessoaService.adicionarContatoPessoa(id, contatoDto);
 
         return ResponseEntity.ok(contatoAdicionado);
     }
+    //----------------------------------------------------------------------------------------------------------
 
-    @GetMapping("/{idPessoa}/contatos")
-    public ResponseEntity<Page<ContatoDto>> listarContatos(@PathVariable Long idPessoa, @PageableDefault @ParameterObject Pageable paginacao) {
-
-        Page<ContatoDto> contatosDtoPage = pessoaService.listarContatos(idPessoa, paginacao);
-        return ResponseEntity.ok(contatosDtoPage);
-    }
 }

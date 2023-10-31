@@ -2,7 +2,7 @@ package br.com.YagoPrazim.ApiControleContatos.services;
 
 import br.com.YagoPrazim.ApiControleContatos.dtos.ContatoDto;
 import br.com.YagoPrazim.ApiControleContatos.exceptions.ResourceNotFoundException;
-import br.com.YagoPrazim.ApiControleContatos.mapper.ContatoMapper;
+import br.com.YagoPrazim.ApiControleContatos.mappers.ContatoMapper;
 import br.com.YagoPrazim.ApiControleContatos.models.ContatoModel;
 import br.com.YagoPrazim.ApiControleContatos.repositories.ContatoRepository;
 
@@ -22,7 +22,6 @@ public class ContatoService {
 
         return ContatoMapper.INSTANCE.toDto(contatoModel);
     }
-
 
     public ContatoDto atualizarContato(Long id, ContatoDto contatoDto) {
         ContatoModel contatoModel = contatoRepository.findById(id)

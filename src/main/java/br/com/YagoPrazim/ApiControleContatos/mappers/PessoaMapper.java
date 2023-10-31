@@ -1,4 +1,4 @@
-package br.com.YagoPrazim.ApiControleContatos.mapper;
+package br.com.YagoPrazim.ApiControleContatos.mappers;
 
 import br.com.YagoPrazim.ApiControleContatos.dtos.PessoaDto;
 import br.com.YagoPrazim.ApiControleContatos.models.PessoaModel;

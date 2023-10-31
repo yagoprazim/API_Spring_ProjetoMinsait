@@ -3,18 +3,18 @@ package br.com.YagoPrazim.ApiControleContatos.services;
 import br.com.YagoPrazim.ApiControleContatos.dtos.ContatoDto;
 import br.com.YagoPrazim.ApiControleContatos.dtos.MalaDiretaDto;
 import br.com.YagoPrazim.ApiControleContatos.dtos.PessoaDto;
-import br.com.YagoPrazim.ApiControleContatos.mapper.ContatoMapper;
-import br.com.YagoPrazim.ApiControleContatos.mapper.PessoaMapper;
+import br.com.YagoPrazim.ApiControleContatos.mappers.ContatoMapper;
+import br.com.YagoPrazim.ApiControleContatos.mappers.PessoaMapper;
 import br.com.YagoPrazim.ApiControleContatos.models.ContatoModel;
 import br.com.YagoPrazim.ApiControleContatos.models.PessoaModel;
 import br.com.YagoPrazim.ApiControleContatos.repositories.ContatoRepository;
 import br.com.YagoPrazim.ApiControleContatos.repositories.PessoaRepository;
 import br.com.YagoPrazim.ApiControleContatos.exceptions.ResourceNotFoundException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,7 +51,6 @@ public class PessoaService {
                 .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada!"));
     }
 
-
     private MalaDiretaDto construirMalaDiretaDto(PessoaDto pessoaDto) {
         String malaDireta = Stream.of(pessoaDto.endereco(),
                         Optional.ofNullable(pessoaDto.cep()).map(cep -> "CEP: " + cep).orElse(null),
@@ -87,19 +86,9 @@ public class PessoaService {
         pessoaRepository.delete(pessoaModel);
     }
 
-    public ContatoDto adicionarContato(Long pessoaId, ContatoDto contatoDto) {
-        PessoaModel pessoaModel = pessoaRepository.findById(pessoaId)
-                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada!"));
-
-        ContatoModel contatoModel = ContatoMapper.INSTANCE.toModel(contatoDto);
-        contatoModel.setPessoa(pessoaModel);
-
-        ContatoModel contatoSalvo = contatoRepository.save(contatoModel);
-
-        return ContatoMapper.INSTANCE.toDto(contatoSalvo);
-    }
-
-    public Page<ContatoDto> listarContatos(Long pessoaId, Pageable paginacao) {
+    //SERVICES QUE SE RELACIONAM COM CONTATOS:
+    //----------------------------------------------------------------------------------------------------------
+    public Page<ContatoDto> listarContatosPessoa(Long pessoaId, Pageable paginacao) {
         PessoaModel pessoaModel = pessoaRepository.findById(pessoaId)
                 .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada!"));
 
@@ -111,4 +100,18 @@ public class PessoaService {
 
         return contatosModelPage.map(ContatoMapper.INSTANCE::toDto);
     }
+
+    public ContatoDto adicionarContatoPessoa(Long pessoaId, ContatoDto contatoDto) {
+        PessoaModel pessoaModel = pessoaRepository.findById(pessoaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada!"));
+
+        ContatoModel contatoModel = ContatoMapper.INSTANCE.toModel(contatoDto);
+        contatoModel.setPessoa(pessoaModel);
+
+        ContatoModel contatoSalvo = contatoRepository.save(contatoModel);
+
+        return ContatoMapper.INSTANCE.toDto(contatoSalvo);
+    }
+    //----------------------------------------------------------------------------------------------------------
+
 }
