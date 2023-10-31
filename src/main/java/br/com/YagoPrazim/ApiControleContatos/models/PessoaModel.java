@@ -1,21 +1,20 @@
 package br.com.YagoPrazim.ApiControleContatos.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.List;
 
 @Entity
-@Table(name = "pessoas")
+@Table(name = "tb_pessoa")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PessoaModel {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -29,7 +28,6 @@ public class PessoaModel {
 
     private String uf;
 
-    @JsonBackReference
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL)
     private List<ContatoModel> contatos;
 
