@@ -28,13 +28,8 @@ public class PessoaService {
     private final ContatoRepository contatoRepository;
 
     public Page<PessoaDto> listarTodasPessoas(Pageable paginacao) {
-        Page<PessoaModel> pessoas = pessoaRepository.findAll(paginacao);
-
-        if (pessoas.isEmpty()) {
-            throw new ResourceNotFoundException("Não há pessoas registradas, cadastre uma!");
-        }
-
-        return pessoas.map(PessoaMapper.INSTANCE::toDto);
+        return pessoaRepository.findAll(paginacao)
+                .map(PessoaMapper.INSTANCE::toDto);
     }
 
     public PessoaDto listarPessoaPorId(Long id) {
@@ -46,18 +41,20 @@ public class PessoaService {
 
     public MalaDiretaDto listarMalaDiretaPorId(Long id) {
         return pessoaRepository.findById(id)
-                .map(pessoaModel -> PessoaMapper.INSTANCE.toDto(pessoaModel))
+                .map(PessoaMapper.INSTANCE::toDto)
                 .map(this::construirMalaDiretaDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada com o ID: " + id));
     }
 
     private MalaDiretaDto construirMalaDiretaDto(PessoaDto pessoaDto) {
-        String malaDireta = Stream.of(pessoaDto.endereco(),
-                        Optional.ofNullable(pessoaDto.cep()).map(cep -> "CEP: " + cep).orElse(null),
+        String malaDireta = Stream.of(
+                pessoaDto.endereco(), Optional.ofNullable(pessoaDto.cep())
+                .map(cep -> "CEP: " + cep).orElse(null),
                         pessoaDto.cidade(),
                         pessoaDto.uf())
                 .filter(Objects::nonNull)
                 .collect(Collectors.joining(" - "));
+
         return new MalaDiretaDto(pessoaDto.id(), pessoaDto.nome(), malaDireta);
     }
 
@@ -70,10 +67,9 @@ public class PessoaService {
 
     public PessoaDto atualizarPessoa(Long id, PessoaDto pessoaDto) {
         PessoaModel pessoaModel = pessoaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Não foi possível atualizar, pessoa não encontrada!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Não foi possível atualizar, pessoa não encontrada."));
 
         PessoaMapper.INSTANCE.updateModelFromDto(pessoaDto, pessoaModel);
-
         PessoaModel pessoaAtualizada = pessoaRepository.save(pessoaModel);
 
         return PessoaMapper.INSTANCE.toDto(pessoaAtualizada);
@@ -81,7 +77,7 @@ public class PessoaService {
 
     public void deletarPessoa(Long id) {
         PessoaModel pessoaModel = pessoaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Não foi possível deletar, pessoa não encontrada!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Não foi possível deletar, pessoa não encontrada."));
 
         pessoaRepository.delete(pessoaModel);
     }
@@ -92,22 +88,20 @@ public class PessoaService {
         PessoaModel pessoaModel = pessoaRepository.findById(pessoaId)
                 .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada!"));
 
-        Page<ContatoModel> contatosModelPage = contatoRepository.findByPessoa(pessoaModel, paginacao);
-
-        if (contatosModelPage.isEmpty()) {
+        Page<ContatoModel> contatosModel = contatoRepository.findByPessoa(pessoaModel, paginacao);
+        if (contatosModel.isEmpty()) {
             throw new ResourceNotFoundException("Nenhum contato encontrado para a pessoa com ID: " + pessoaId);
         }
 
-        return contatosModelPage.map(ContatoMapper.INSTANCE::toDto);
+        return contatosModel.map(ContatoMapper.INSTANCE::toDto);
     }
 
     public ContatoDto adicionarContatoPessoa(Long pessoaId, ContatoDto contatoDto) {
         PessoaModel pessoaModel = pessoaRepository.findById(pessoaId)
-                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada."));
 
         ContatoModel contatoModel = ContatoMapper.INSTANCE.toModel(contatoDto);
         contatoModel.setPessoa(pessoaModel);
-
         ContatoModel contatoSalvo = contatoRepository.save(contatoModel);
 
         return ContatoMapper.INSTANCE.toDto(contatoSalvo);

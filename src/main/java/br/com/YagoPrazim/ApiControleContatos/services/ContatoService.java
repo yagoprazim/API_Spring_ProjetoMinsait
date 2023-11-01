@@ -18,7 +18,7 @@ public class ContatoService {
 
     public ContatoDto listarContatoPorId(Long id) {
         ContatoModel contatoModel = contatoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Contato não encontrado com o ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Contato não encontrado."));
 
         return ContatoMapper.INSTANCE.toDto(contatoModel);
     }
@@ -28,7 +28,6 @@ public class ContatoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Não foi possível atualizar, contato não encontrado."));
 
         ContatoMapper.INSTANCE.updateModelFromDto(contatoDto, contatoModel);
-
         ContatoModel contatoAtualizado = contatoRepository.save(contatoModel);
 
         return ContatoMapper.INSTANCE.toDto(contatoAtualizado);
