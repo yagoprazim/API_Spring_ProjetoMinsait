@@ -1,10 +1,7 @@
 package br.com.YagoPrazim.ApiControleContatos.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -31,6 +28,7 @@ public class PessoaModel {
     private String uf;
 
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<ContatoModel> contatos;
-
 }

@@ -1,6 +1,7 @@
 package br.com.YagoPrazim.ApiControleContatos.services;
 
-import br.com.YagoPrazim.ApiControleContatos.dtos.ContatoDto;
+import br.com.YagoPrazim.ApiControleContatos.dtos.request.ContatoRequestDto;
+import br.com.YagoPrazim.ApiControleContatos.dtos.response.ContatoResponseDto;
 import br.com.YagoPrazim.ApiControleContatos.exceptions.ResourceNotFoundException;
 import br.com.YagoPrazim.ApiControleContatos.mappers.ContatoMapper;
 import br.com.YagoPrazim.ApiControleContatos.models.ContatoModel;
@@ -16,21 +17,21 @@ public class ContatoService {
 
     private final ContatoRepository contatoRepository;
 
-    public ContatoDto listarContatoPorId(Long id) {
+    public ContatoResponseDto listarContatoPorId(Long id) {
         ContatoModel contatoModel = contatoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Contato não encontrado."));
 
-        return ContatoMapper.INSTANCE.toDto(contatoModel);
+        return ContatoMapper.INSTANCE.toResponseDto(contatoModel);
     }
 
-    public ContatoDto atualizarContato(Long id, ContatoDto contatoDto) {
+    public ContatoResponseDto atualizarContato(Long id, ContatoRequestDto contatoRequestDto) {
         ContatoModel contatoModel = contatoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Não foi possível atualizar, contato não encontrado."));
 
-        ContatoMapper.INSTANCE.updateModelFromDto(contatoDto, contatoModel);
+        ContatoMapper.INSTANCE.updateModelFromDto(contatoRequestDto, contatoModel);
         ContatoModel contatoAtualizado = contatoRepository.save(contatoModel);
 
-        return ContatoMapper.INSTANCE.toDto(contatoAtualizado);
+        return ContatoMapper.INSTANCE.toResponseDto(contatoAtualizado);
     }
 
     public void deletarContato(Long id) {
@@ -39,5 +40,4 @@ public class ContatoService {
 
         contatoRepository.delete(contatoModel);
     }
-
 }

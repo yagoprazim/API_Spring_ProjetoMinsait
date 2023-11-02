@@ -3,7 +3,6 @@ package br.com.YagoPrazim.ApiControleContatos.validations.constraints;
 import br.com.YagoPrazim.ApiControleContatos.validations.TipoContatoValidation;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import jakarta.validation.Valid;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.*;
 

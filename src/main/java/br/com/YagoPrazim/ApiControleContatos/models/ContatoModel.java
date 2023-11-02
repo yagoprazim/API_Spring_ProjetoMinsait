@@ -1,9 +1,7 @@
 package br.com.YagoPrazim.ApiControleContatos.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "tb_contato")
@@ -24,6 +22,7 @@ public class ContatoModel {
 
     @ManyToOne
     @JoinColumn(name = "pessoa_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private PessoaModel pessoa;
-
 }
