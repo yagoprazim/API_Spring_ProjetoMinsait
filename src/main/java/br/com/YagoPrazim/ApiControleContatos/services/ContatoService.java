@@ -21,17 +21,17 @@ public class ContatoService {
         ContatoModel contatoModel = contatoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Contato não encontrado."));
 
-        return ContatoMapper.INSTANCE.toResponseDto(contatoModel);
+        return ContatoMapper.INSTANCE.converteParaResponseDto(contatoModel);
     }
 
     public ContatoResponseDto atualizarContato(Long id, ContatoRequestDto contatoRequestDto) {
         ContatoModel contatoModel = contatoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Não foi possível atualizar, contato não encontrado."));
 
-        ContatoMapper.INSTANCE.updateModelFromDto(contatoRequestDto, contatoModel);
+        ContatoMapper.INSTANCE.atualizaModelAPartirDeDto(contatoRequestDto, contatoModel);
         ContatoModel contatoAtualizado = contatoRepository.save(contatoModel);
 
-        return ContatoMapper.INSTANCE.toResponseDto(contatoAtualizado);
+        return ContatoMapper.INSTANCE.converteParaResponseDto(contatoAtualizado);
     }
 
     public void deletarContato(Long id) {

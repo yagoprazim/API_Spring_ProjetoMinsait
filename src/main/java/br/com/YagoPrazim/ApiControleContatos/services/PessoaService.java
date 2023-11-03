@@ -31,50 +31,31 @@ public class PessoaService {
 
     public Page<PessoaResponseDto> listarTodasPessoas(Pageable paginacao) {
         return pessoaRepository.findAll(paginacao)
-                .map(PessoaMapper.INSTANCE::toResponseDto);
+                .map(PessoaMapper.INSTANCE::converteParaResponseDto);
     }
 
     public PessoaResponseDto listarPessoaPorId(Long id) {
         PessoaModel pessoaModel = pessoaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada com o ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada."));
 
-        return PessoaMapper.INSTANCE.toResponseDto(pessoaModel);
-    }
-
-    public MalaDiretaDto listarMalaDiretaPorId(Long id) {
-        return pessoaRepository.findById(id)
-                .map(PessoaMapper.INSTANCE::toResponseDto)
-                .map(this::construirMalaDiretaDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada com o ID: " + id));
-    }
-
-    private MalaDiretaDto construirMalaDiretaDto(PessoaResponseDto pessoaResponseDto) {
-        String malaDireta = Stream.of(
-                        pessoaResponseDto.endereco(), Optional.ofNullable(pessoaResponseDto.cep())
-                                .map(cep -> "CEP: " + cep).orElse(null),
-                        pessoaResponseDto.cidade(),
-                        pessoaResponseDto.uf())
-                .filter(Objects::nonNull)
-                .collect(Collectors.joining(" - "));
-
-        return new MalaDiretaDto(pessoaResponseDto.id(), pessoaResponseDto.nome(), malaDireta);
+        return PessoaMapper.INSTANCE.converteParaResponseDto(pessoaModel);
     }
 
     public PessoaResponseDto registrarPessoa(PessoaRequestDto pessoaRequestDto) {
-        PessoaModel pessoaModel = PessoaMapper.INSTANCE.toModel(pessoaRequestDto);
+        PessoaModel pessoaModel = PessoaMapper.INSTANCE.converteParaModel(pessoaRequestDto);
         PessoaModel pessoaSalva = pessoaRepository.save(pessoaModel);
 
-        return PessoaMapper.INSTANCE.toResponseDto(pessoaSalva);
+        return PessoaMapper.INSTANCE.converteParaResponseDto(pessoaSalva);
     }
 
     public PessoaResponseDto atualizarPessoa(Long id, PessoaRequestDto pessoaRequestDto) {
         PessoaModel pessoaModel = pessoaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Não foi possível atualizar, pessoa não encontrada."));
 
-        PessoaMapper.INSTANCE.updateModelFromDto(pessoaRequestDto, pessoaModel);
+        PessoaMapper.INSTANCE.atualizaModelAPartirDeDto(pessoaRequestDto, pessoaModel);
         PessoaModel pessoaAtualizada = pessoaRepository.save(pessoaModel);
 
-        return PessoaMapper.INSTANCE.toResponseDto(pessoaAtualizada);
+        return PessoaMapper.INSTANCE.converteParaResponseDto(pessoaAtualizada);
     }
 
     public void deletarPessoa(Long id) {
@@ -84,26 +65,45 @@ public class PessoaService {
         pessoaRepository.delete(pessoaModel);
     }
 
+    public MalaDiretaDto listarMalaDiretaPorId(Long id) {
+        return pessoaRepository.findById(id)
+                .map(PessoaMapper.INSTANCE::converteParaResponseDto)
+                .map(this::construirMalaDiretaDto)
+                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada."));
+    }
+
+    private MalaDiretaDto construirMalaDiretaDto(PessoaResponseDto pessoaResponseDto) {
+        String malaDireta = Stream.of(
+                pessoaResponseDto.endereco(), Optional.ofNullable(pessoaResponseDto.cep())
+                        .map(cep -> "CEP: " + cep).orElse(null),
+                        pessoaResponseDto.cidade(),
+                        pessoaResponseDto.uf())
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(" - "));
+
+        return new MalaDiretaDto(pessoaResponseDto.id(), pessoaResponseDto.nome(), malaDireta);
+    }
+
     public Page<ContatoResponseDto> listarContatosPessoa(Long pessoaId, Pageable paginacao) {
         PessoaModel pessoaModel = pessoaRepository.findById(pessoaId)
-                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada."));
 
-        Page<ContatoModel> contatosModel = contatoRepository.findByPessoa(pessoaModel, paginacao);
-        if (contatosModel.isEmpty()) {
-            throw new ResourceNotFoundException("Nenhum contato encontrado para a pessoa com ID: " + pessoaId);
+        Page<ContatoModel> contatos = contatoRepository.findByPessoa(pessoaModel, paginacao);
+        if (contatos.isEmpty()) {
+            throw new ResourceNotFoundException("Nenhum contato encontrado na pessoa informada.");
         }
 
-        return contatosModel.map(ContatoMapper.INSTANCE::toResponseDto);
+        return contatos.map(ContatoMapper.INSTANCE::converteParaResponseDto);
     }
 
     public ContatoResponseDto adicionarContatoPessoa(Long pessoaId, ContatoRequestDto contatoRequestDto) {
         PessoaModel pessoaModel = pessoaRepository.findById(pessoaId)
-                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada com o ID: " + pessoaId));
+                .orElseThrow(() -> new ResourceNotFoundException("Pessoa não encontrada."));
 
-        ContatoModel contatoModel = ContatoMapper.INSTANCE.toModel(contatoRequestDto);
+        ContatoModel contatoModel = ContatoMapper.INSTANCE.converteParaModel(contatoRequestDto);
         contatoModel.setPessoa(pessoaModel);
         ContatoModel contatoSalvo = contatoRepository.save(contatoModel);
 
-        return ContatoMapper.INSTANCE.toResponseDto(contatoSalvo);
+        return ContatoMapper.INSTANCE.converteParaResponseDto(contatoSalvo);
     }
 }

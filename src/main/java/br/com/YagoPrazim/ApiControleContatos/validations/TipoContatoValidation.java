@@ -1,6 +1,7 @@
 package br.com.YagoPrazim.ApiControleContatos.validations;
 
 import br.com.YagoPrazim.ApiControleContatos.validations.constraints.TipoContato;
+
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

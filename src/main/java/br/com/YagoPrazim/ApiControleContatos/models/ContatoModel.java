@@ -22,7 +22,5 @@ public class ContatoModel {
 
     @ManyToOne
     @JoinColumn(name = "pessoa_id", nullable = false)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private PessoaModel pessoa;
 }

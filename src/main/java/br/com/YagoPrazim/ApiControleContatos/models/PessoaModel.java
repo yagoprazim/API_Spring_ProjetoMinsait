@@ -28,7 +28,5 @@ public class PessoaModel {
     private String uf;
 
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private List<ContatoModel> contatos;
 }
