@@ -8,7 +8,7 @@ Trata-se de uma **API Rest** desenvolvida com o **Spring Boot Framework 3.0.12 (
 - Java JDK - version 17.0.8
 - Banco de Dados MySQL - version 8.0.33
 - Maven
-- Ambiente de Desenvolvimento - IDE (Recomendo o Intellij, pois ele já possui o Maven embutido)
+- Ambiente de Desenvolvimento - IDE
 ------------------------------------------------------------------------------------------------------
 ### :computer: Instalação e Execução
 1. **Na sua IDE, clone o repositório e acesse a pasta principal:**
@@ -21,7 +21,7 @@ Trata-se de uma **API Rest** desenvolvida com o **Spring Boot Framework 3.0.12 (
    - Utilizando um gerenciador ou o próprio Prompt, crie o banco de dados seguindo o que você deixou definido no 'application.properties'.
 
 3. **Baixando as dependências e executando a aplicação, no terminal:**
-   - mvn spring-boot:run
+   - ./mvnw spring-boot:run
    - Por padrão, ele irá rodar no: http://localhost:8080/
      
 4. **Após a aplicação rodar corretamente, verifique se foram criadas as tabelas no seu banco:**
